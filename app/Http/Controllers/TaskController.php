@@ -17,15 +17,15 @@ class TaskController extends Controller
 //해당 유저의 전체 태스크 리스트
     public function index() {
         $user = \Auth::user(); // 현재 로그 인 한 유저를 식별
-        $projects = Project::where('user_id','=', $user->id)->get(); //data 오브젝트에 추출한 데이터를 담는다
+        $data['projects'] = Project::where('user_id','=', $user->id)->get(); //data 오브젝트에 추출한 데이터를 담는다
 
-        foreach($projects as $project) {
-            $tasks[$project->id] = Task::where('project_id','=', $project->id)->get();
+        foreach($data['projects'] as $project) {
+            $data['tasks'.$project->id] = Task::where('project_id','=', $project->id)->get();
         }
         //2. 화면 불러오기 + 데이터
 
-//        dd($tasks);
-        return view('project.task.index', compact('projects','tasks'));
+        dd($data);
+        return view('project.task.index', $data);
     }
 
     //각 프로젝트 별 태스크 리스트.
@@ -33,8 +33,12 @@ class TaskController extends Controller
     {
         //1. data 준비
         //프로젝트 식별
-        $data['tasks']= Task::where('project_id','=',$id)->get();
-//
+        $data['tasks']= Task::where('project_id', $id)->get();
+
+        if($data['tasks']==null){
+            abort(404, $id."Model has not found.");
+        }
+
         //2. 화면 불러오기 + 데이터
 //       dd($data['tasks']);
 
@@ -84,7 +88,8 @@ class TaskController extends Controller
 
         $task->save();
 
-        return redirect('task/{id}')->with('message', $task->name. 'has been created.');
+        return redirect()->route('task.index')->with('message', $task->name.'has been created.');
+
     }
 
     /**
@@ -97,6 +102,7 @@ class TaskController extends Controller
     {
         //
         $data['tasks'] = Task::findOrFail($id);
+        $data['project'] = Project::where('id','=', $data['tasks']->project_id)->get();
 
         if($data['tasks']==null){
             abort(404, $id."Model has not found.");
@@ -114,10 +120,14 @@ class TaskController extends Controller
     public function edit($id)
     {
         //
+//        $user = \Auth::user();
+//        $data['projects'] = Project::where('user_id','=', $user->id)->get();
         $data['task'] = Task::findOrFail($id);
+        $data['project'] = Project::where('id','=', $data['task']->project_id)->get();
 
+//        dd($data['project']);
         //2. 화면 로딩 + data
-        return view('project.task.edit',    $data);
+        return view('project.task.edit',$data);
     }
 
     /**
@@ -134,13 +144,13 @@ class TaskController extends Controller
 
         $task->name = $request->name;
         $task->description = $request->description;
-        $task->project_id = $request->project_id;
+//        $task->project_id = $request->project_id;
         $task->due_date = $request->due_date;
         $task->priority = $request->priority;
 
         $task->save();
 
-        return redirect('/task')->with('message', $task->name. 'has been updated.');
+        return redirect()->route('task.index')->with('message', $task->name.'has been updated.');
     }
 
     /**
@@ -155,6 +165,6 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
 
         $task->delete();
-        return redirect('/task')->with('message', $task->name. "has been deleted.");
+        return redirect()->route('task.index')->with('message', $task->name."has been deleted.");
     }
 }

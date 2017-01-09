@@ -22,9 +22,12 @@ Route::group(['middleware'=>'auth'],function(){
 
     Route::get('task', 'TaskController@index')->name('task.index');
     Route::get('project/{project_id}/task', 'TaskController@listUp')->name('project.task'); //하위카테고리로 관리.
-    Route::get('task/create', 'TaskController@create')->name('task.create');
-    Route::post('task', 'TaskController@store');
-    Route::get('task/{id}', 'TaskController@show');
+    Route::get('task/create', 'TaskController@create')->name('task.create');  //done
+    Route::post('/task', 'TaskController@store')->name('task');
+    Route::get('task/{id}', 'TaskController@show'); //done
+    Route::get('task/{id}/edit', 'TaskController@edit')->name('task.edit'); //done
+    Route::put('task/{id}', 'TaskController@update')->name('task.update'); //done
+    Route::delete('task/{id}', 'TaskController@destroy')->name('task.destroy'); //done
     //Route::resource('task', 'TaskController');
 
     Route::get('/home', 'HomeController@index');

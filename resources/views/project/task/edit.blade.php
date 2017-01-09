@@ -17,6 +17,12 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label for="Project Name">Project Name</label>
+                    <div>
+                        <input type="text" class="form-control" id="project_id" name="project_id" value="{{$project[0]->name}}" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label for="Task Description">Task Description</label>
                     <div>
                         <textarea class="form-control" id="description" name="description">{{$task->description}}</textarea>

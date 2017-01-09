@@ -35,7 +35,7 @@
                 <tr>
                     <td><a href="#">{{$task->name}}</a></td>
                     {{--<td><a href="{{url("task.show", $task->id)}}">{{$task->name}}</a></td>--}}
-                    <td>{{$task->project_id->name}}</td>
+                    <td>{{$task->projects->name}}</td>
                     <td>{{$task->description}}</td>
                     <td>{{$task->due_date}}</td>
                     <td>{{$task->priority}}</td>
